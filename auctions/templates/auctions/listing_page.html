@@ -1,0 +1,115 @@
+{% extends "auctions/layout.html" %}
+
+{% block body %}
+
+<style>
+    .listing {
+        width: 500px;
+        height: 400px;
+        border: 1px solid gray;
+        overflow: hidden;
+      }
+    
+      .image {
+        width: 50%;
+        height: 50%;
+      }
+    
+      .listing-content {
+        padding: 10px;
+      }
+
+      .comment {
+        margin-bottom: 20px;
+        padding: 10px;
+        background-color: #f2f2f2;
+        border-radius: 5px;
+      }
+      
+      .comment p:first-child {
+        font-weight: bold;
+      }
+      
+      .comment p:last-child {
+        margin-top: 5px;
+        font-size: 14px;
+        color: #444;
+      }
+</style>
+
+<div class="description">
+   
+        <h3> Listing:  {{listing.title}} </h3>
+        <h6> {{listing.description}} </h6>
+        
+
+<img class="image" src={{listing.image}} alt="Image of the item">
+
+</div>
+<br><br>
+<div class="bid">
+   <h5>Current price: {{listing.price}} $ </h5>
+   <p> {{bid_count}} bids are placed </p>
+   {% if error_message %}
+   <div class="alert alert-danger">{{ error_message }}</div>
+   {% endif %}
+   {%if listing.active %}
+   <form action ="{% url 'place_bid' listing.title %}" method="POST">
+    {% csrf_token %}
+    <input type="number" name="bid" step="5" placeholder="Your bid"><br><br>
+    <input type="submit" value="Bid">
+  </form>
+  {% endif %}
+</div>
+<br><br>
+<div class="details">
+    <h5>Details: </h5>
+    <ul>
+        <li>Listed by: {{listing.owner}}</li>
+        <li>Category: {{listing.item_category}}</li>
+    </ul>
+</div>
+{% if message %}
+   <div class="alert alert-danger">{{ message }}</div>
+   {% endif %}
+<div>
+  {%if listing.active %}
+  {% if not inWatchlist %}
+  <a href="{% url 'watchlist_add' listing.title%}" role="button" class="btn btn-outline-success btn-lg">Add to Watchlist</a>
+  {% else %}
+  <a href="{% url 'watchlist_delete' listing.title%}" role="button" class="btn btn-outline-danger btn-lg">Delete from Watchlist</a>
+   {% endif %}
+</div>
+{% endif %}
+
+
+{% if canClose %}
+<a href="{% url 'make_inactive' listing.title%}" role="button" class="btn btn-outline-danger btn-lg">Close auction</a>
+{% endif %}
+{% if isWinner %}
+<div class="alert alert-danger">
+  <h3>
+    You are the winner
+  </h3>
+</div>
+{% endif %}
+
+<br><br>
+
+<div class="comment">
+<form action ="{% url 'comment' listing.title %}" method="POST">
+  {% csrf_token %}
+  <input type="text" name="comment" step="5" placeholder="Your comment"><br><br>
+  <input type="submit" value="Comment">
+</form>
+</div>
+
+{% for comment in comments %}
+    <div class="comment">
+        <p>User {{ comment.commentator.username }}:</p>
+        <p>{{ comment.text }}</p>
+    </div>
+{% endfor %}
+
+{% endblock %}
+
