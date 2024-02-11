@@ -1,0 +1,35 @@
+{% extends "auctions/layout.html" %}`   `
+
+{% block body %}
+<style>
+    .listing {
+        width: 500px;
+        height: 400px;
+        border: 1px solid gray;
+        overflow: hidden;
+      }
+    
+      .image {
+        width: 100%;
+        height: auto;
+      }
+    
+      .listing-content {
+        padding: 10px;
+      }
+</style>
+
+    <h2>Your saved items</h2>
+    {% for listing in listings %}
+    <div class="listing">
+        <div class="listing-content">
+            <h3> <a href="/listings/{{listing.title}}"> {{listing.title}} </a></h3>
+            <h5> {{listing.description}} </h5>
+            <p>current price: {{listing.price}} $ </p>
+        </div>
+    <img class="image" src={{listing.image}} alt="Image of the item">
+    </div>
+    <br><br>
+
+    {% endfor%}
+{% endblock %}
